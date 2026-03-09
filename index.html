@@ -814,7 +814,7 @@ function escapeHtml(str) {
       });
 
       audio.addEventListener('play', () => {
-        playBtn.textContent = '⏸';
+        playBtn.textContent = '||';
         playBtn.setAttribute('aria-label', '일시정지');
         setDiskPlaying(true);
         renderPlaylist();
