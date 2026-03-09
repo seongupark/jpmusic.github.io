@@ -623,53 +623,81 @@
       });
     }
 
-    async function parseLRC(lrcPath) {
-    lyricsStreamWrapper.innerHTML = "";
-    lyricsData = [];
+    async function fetchTextWithEncoding(url) {
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${url}`);
+      }
 
-    try {
-        const text = await fetchTextWithEncoding(lrcPath);
-        const lines = text.split('\n');
-        const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
+      const buffer = await response.arrayBuffer();
 
-        lines.forEach(line => {
-            const match = timeReg.exec(line);
-            if (match) {
-                const min = parseInt(match[1], 10);
-                const sec = parseInt(match[2], 10);
-                const ms = parseInt(match[3], 10);
-                const time = min * 60 + sec + (ms / 100);
-
-                const content = line.replace(timeReg, '').trim();
-                if (content) {
-                    lyricsData.push({ time, content });
-                }
-            }
-        });
-
-        lyricsData.sort((a, b) => a.time - b.time);
-
-        if (lyricsData.length > 0) {
-            lyricsStreamWrapper.innerHTML = lyricsData
-                .map((l, i) => `<div class="lyric-line" id="line-${i}">${escapeHtml(l.content)}</div>`)
-                .join('');
-        } else {
-            lyricsStreamWrapper.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+      try {
+        return new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+      } catch (e) {
+        try {
+          return new TextDecoder('euc-kr').decode(buffer);
+        } catch (e2) {
+          return new TextDecoder('utf-8').decode(buffer);
         }
-    } catch (e) {
-        console.error('LRC load error:', e);
-        lyricsStreamWrapper.innerHTML = '<div class="lyric-line">가사를 불러올 수 없습니다</div>';
+      }
     }
-}
 
-function escapeHtml(str) {
-    return str
+    function escapeHtml(str) {
+      return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
-}
+    }
+
+    async function parseLRC(lrcPath) {
+      lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중…</div>';
+      lyricsInner.style.top = '0px';
+      state.lyrics = [];
+
+      try {
+        const text = await fetchTextWithEncoding(lrcPath);
+        const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n');
+        const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          if (!line) continue;
+
+          const matches = [...line.matchAll(timeReg)];
+          if (!matches.length) continue;
+
+          const content = line.replace(timeReg, '').trim();
+          if (!content) continue;
+
+          for (const match of matches) {
+            const min = parseInt(match[1], 10);
+            const sec = parseInt(match[2], 10);
+            const fracRaw = match[3];
+            const frac = fracRaw.length === 2 ? parseInt(fracRaw, 10) / 100 : parseInt(fracRaw, 10) / 1000;
+            state.lyrics.push({
+              time: min * 60 + sec + frac,
+              content
+            });
+          }
+        }
+
+        state.lyrics.sort((a, b) => a.time - b.time);
+
+        if (state.lyrics.length) {
+          lyricsInner.innerHTML = state.lyrics
+            .map((l, i) => `<div class="lyric-line" id="line-${i}">${escapeHtml(l.content)}</div>`)
+            .join('');
+        } else {
+          lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+        }
+      } catch (e) {
+        console.error('LRC load error:', e);
+        lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러올 수 없습니다</div>';
+      }
+    }
 
     async function loadTrack(index, autoplay = false) {
       state.currentIndex = index;
@@ -814,7 +842,7 @@ function escapeHtml(str) {
       });
 
       audio.addEventListener('play', () => {
-        playBtn.textContent = '||';
+        playBtn.textContent = '⏸';
         playBtn.setAttribute('aria-label', '일시정지');
         setDiskPlaying(true);
         renderPlaylist();
