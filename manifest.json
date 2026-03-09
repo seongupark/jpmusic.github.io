@@ -1,7 +1,7 @@
 {
   "name": "장평 뮤직앨범",
   "short_name": "장평뮤직",
-  "description": "장평 뮤직앨범 PWA 음악 플레이어",
+  "description": "장평 뮤직앨범 플레이어",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",
