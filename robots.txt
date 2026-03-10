@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://github.com/seongupark/jpmusic.github.io/sitemap.xml
+
+Sitemap: https://seongupark.github.io/jpmusic.github.io/sitemap.xml
