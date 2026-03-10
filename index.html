@@ -11,7 +11,26 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  
   <title>장평 뮤직앨범</title>
+  <title>장평 배드민턴클럽 | 동대문구 배드민턴동호회 | 공식 음악앨범</title>
+  <meta name="description" content="서울 동대문구 장평 배드민턴클럽 공식 페이지. 장평클럽 소개, 배드민턴 동호회 활동, 음악앨범, MP3 다운로드, 유튜브 영상 링크 제공." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://github.com/seongupark/jpmusic.github.io/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="장평 배드민턴클럽 | 동대문구 배드민턴동호회" />
+  <meta property="og:description" content="장평클럽 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" />
+  <meta property="og:url" content="https://github.com/seongupark/jpmusic.github.io/" />
+  <meta property="og:image" content="https://github.com/seongupark/jpmusic.github.io/icons/icon-512.png" />
+
+
+
+
+
+
+
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
@@ -588,6 +607,8 @@
         <div id="trackLinks" class="links-list"></div>
       </section>
     </section><br>
+
+    <a href="./club-intro.html">장평 배드민턴클럽 소개</a>
   </main>
 
   <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
@@ -693,7 +714,7 @@
           <div class="link-card-title">${String(index + 1).padStart(2, '0')}. ${escapeHtml(song.title)}</div>
           <div class="link-row">
             <a class="track-link" href="${song.url}" download><img src='./icons/mp3_down.png' width=25> 다운</a>
-            <a class="track-link" href="${song.lrc}" download> 가사다운</a>
+            <a class="track-link" href="${song.lrc}" download> 가사 다운</a>
             ${youtubeLink}
           </div>
         `;
