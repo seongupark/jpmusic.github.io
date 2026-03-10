@@ -686,14 +686,14 @@
         item.className = 'link-card';
 
         const youtubeLink = song.youtube && song.youtube.trim()
-          ? `<a class="track-link" href="${song.youtube}" target="_blank" rel="noopener noreferrer"><img src='./icons/youtube_small.png' width=20 > YouTube 영상</a>`
+          ? `<a class="track-link" href="${song.youtube}" target="_blank" rel="noopener noreferrer"><img src='./icons/youtube_small.png' width=20 > 영상</a>`
           : `<span class="track-link muted">YouTube 링크 미입력</span>`;
 
         item.innerHTML = `
           <div class="link-card-title">${String(index + 1).padStart(2, '0')}. ${escapeHtml(song.title)}</div>
           <div class="link-row">
             <a class="track-link" href="${song.url}" download><img src='./icons/mp3_down.png' width=25> MP3 다운로드</a>
-            <a class="track-link" href="${song.lrc}" download><img src='./icons/mp3_down.png' width=25> 가사 다운로드</a>
+            <a class="track-link" href="${song.lrc}" download> 가사 다운로드</a>
             ${youtubeLink}
           </div>
         `;
