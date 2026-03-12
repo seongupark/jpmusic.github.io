@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0b10" />
+  <meta name="description" content="장평 뮤직앨범 플레이어" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="장평 뮤직앨범" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  
+  <title>장평 뮤직앨범</title>
+  <title>장평 배드민턴클럽 | 동대문구 배드민턴동호회 | 공식 음악앨범</title>
+  <meta name="description" content="서울 동대문구 장평 배드민턴클럽 공식 페이지. 장평클럽 소개, 배드민턴 동호회 활동, 음악앨범, MP3 다운로드, 유튜브 영상 링크 제공." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://seongupark.github.io/jpmusic.github.io/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="장평 배드민턴클럽 | 동대문구 배드민턴동호회" />
+  <meta property="og:description" content="장평클럽 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" />
+  <meta property="og:url" content="https://seongupark.github.io/jpmusic.github.io/" />
+  <meta property="og:image" content="https://seongupark.github.io/jpmusic.github.io/icons/icon-512.png" />
+
+
+
+
+
+
+
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0b10;
+      --panel: #14161f;
+      --panel-2: #10131b;
+      --border: rgba(0,229,255,.18);
+      --line: rgba(0,229,255,.08);
+      --text: #f2f4f8;
+      --muted: #96a0b5;
+      --blue: #00e5ff;
+      --pink: #ff0055;
+      --blue-glow: rgba(0,229,255,.45);
+      --pink-glow: rgba(255,0,85,.35);
+      --success: #5cff8d;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: 'Exo 2', system-ui, sans-serif;
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        radial-gradient(circle at top, rgba(0,229,255,.08), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255,0,85,.08), transparent 30%),
+        var(--bg);
+      background-size: 20px 20px, 20px 20px, auto, auto, auto;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(100%, 980px);
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent), var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 30px rgba(0,0,0,.38), 0 0 24px rgba(0,229,255,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--pink));
+    }
+
+    .player-panel {
+      padding: 28px;
+    }
+
+    .playlist-panel {
+      padding: 12px;
+      min-height: 640px;
+      background: linear-gradient(180deg, rgba(255,255,255,.015), transparent), var(--panel-2);
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      letter-spacing: .18em;
+      font-size: .78rem;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      opacity: .95;
+    }
+
+    .title {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.4rem, 1.8vw, 1.8rem);
+      line-height: 1.2;
+      letter-spacing: .04em;
+    }
+
+    .artist {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .core-wrap {
+      width: min(280px, 76vw);
+      aspect-ratio: 1;
+      margin: 26px auto 22px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .core-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid var(--blue);
+      box-shadow: 0 0 16px var(--blue-glow), inset 0 0 12px rgba(0,229,255,.22);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.06), transparent 50%),
+        rgba(0,0,0,.18);
+    }
+
+    .cover {
+      position: absolute;
+      inset: 4.2%;
+      width: 91.6%;
+      height: 91.6%;
+      object-fit: cover;
+      border-radius: 50%;
+      opacity: .85;
+      filter: saturate(1.1);
+    }
+
+    .ring-highlight {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.16), transparent 18%),
+        conic-gradient(from 0deg, transparent 0 30%, rgba(0,229,255,.14) 30% 45%, transparent 45% 70%, rgba(255,0,85,.12) 70% 84%, transparent 84% 100%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .core-center {
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #191c27, #080a11);
+      border: 2px solid var(--pink);
+      box-shadow: 0 0 16px var(--pink-glow), inset 0 0 10px rgba(255,0,85,.15);
+      z-index: 2;
+    }
+
+    .rotating {
+      animation: spin 6s linear infinite;
+    }
+
+    .paused {
+      animation-play-state: paused;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .time-row, .volume-row, .top-actions, .transport {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .install-btn, .ghost-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font: inherit;
+      transition: .2s ease;
+    }
+
+    .install-btn:hover, .ghost-btn:hover {
+      border-color: rgba(0,229,255,.35);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.06);
+    }
+
+    .install-btn[hidden] { display: none; }
+
+    .mode-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: .2s ease;
+    }
+
+    .mode-btn.active {
+      color: var(--pink);
+      border-color: rgba(255,0,85,.34);
+      box-shadow: 0 0 18px rgba(255,0,85,.18), inset 0 0 0 1px rgba(255,0,85,.1);
+      text-shadow: 0 0 10px rgba(255,0,85,.35);
+    }
+
+    .transport {
+      justify-content: center;
+      margin: 18px 0;
+    }
+
+    .transport button {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      color: var(--blue);
+      background: transparent;
+      font-size: 1.4rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      transition: .2s ease;
+    }
+
+    .transport button:hover {
+      background: rgba(0,229,255,.06);
+      box-shadow: inset 0 0 0 1px rgba(0,229,255,.12);
+    }
+
+    .transport .play {
+      width: 72px;
+      height: 72px;
+      font-size: 1.8rem;
+      border: 2px solid var(--blue);
+      background: rgba(0,229,255,.03);
+      box-shadow: 0 0 16px var(--blue-glow), inset 0 0 12px rgba(0,229,255,.14);
+    }
+
+    .range {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(0,229,255,.12);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 12px var(--blue-glow);
+    }
+
+    .range::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--blue);
+      box-shadow: 0 0 12px var(--blue-glow);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: .88rem;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .lyrics {
+      margin-top: 18px;
+      border: 1px solid rgba(255,0,85,.16);
+      background: rgba(0,0,0,.22);
+      border-radius: 12px;
+      padding: 12px;
+      height: 168px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .lyrics-inner {
+      position: absolute;
+      top: 0;
+      left: 12px;
+      right: 12px;
+      transition: top .28s ease;
+    }
+
+    .lyric-line {
+      height: 36px;
+      line-height: 36px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: .22s ease;
+      font-size: .93rem;
+    }
+
+    .lyric-line.active {
+      color: var(--pink);
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(255,0,85,.18);
+    }
+
+    .playlist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(92,255,141,.5);
+    }
+
+    .playlist {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 560px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .playlist::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .playlist::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.1);
+      border-radius: 999px;
+    }
+
+    .track {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+      border-radius: 6px;
+      padding: 6px;
+      cursor: pointer;
+      transition: .18s ease;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .track:hover {
+      border-color: rgba(0,229,255,.22);
+      background: rgba(0,229,255,.045);
+    }
+
+    .track.active {
+      border-color: rgba(0,229,255,.34);
+      background: linear-gradient(90deg, rgba(0,229,255,.08), rgba(255,255,255,.02));
+      box-shadow: inset 0 0 0 1px rgba(0,229,255,.08);
+    }
+
+    .track-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.03);
+      color: var(--blue);
+      font-family: 'Orbitron', sans-serif;
+      font-size: .95rem;
+    }
+
+    .track-title {
+      color: var(--blue);
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .track-artist {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-top: 4px;
+    }
+
+    .track-state {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .empty-msg {
+      color: var(--muted);
+      padding: 12px 0;
+    }
+
+    .hint {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .85rem;
+      line-height: 1.5;
+    }
+
+
+    .links-section {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    .links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .link-card {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .link-card-title {
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .link-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .track-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--blue);
+      text-decoration: none;
+      font-size: .9rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,229,255,.18);
+      background: rgba(0,229,255,.04);
+      transition: .18s ease;
+    }
+
+    .track-link:hover {
+      border-color: rgba(0,229,255,.36);
+      background: rgba(0,229,255,.08);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.05);
+    }
+
+    .track-link.muted {
+      color: var(--muted);
+      border-color: rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      .playlist-panel {
+        min-height: auto;
+      }
+      .playlist {
+        max-height: 360px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="panel player-panel" aria-label="뮤직 플레이어">
+      <div class="top-actions">
+        <div>
+          <div class="eyebrow">JangPyung Music Album</div>
+          <h1 class="title" id="title">장평 뮤직앨범</h1>
+          <div class="artist" id="artist">Tony.Park</div>
+        </div>
+        <button id="installBtn" class="install-btn" hidden>앱 설치</button>
+      </div>
+
+      <div class="core-wrap">
+        <div id="disk" class="core-ring">
+          <img id="cover" class="cover" alt="앨범 아트" src="./icons/icon-512.png" />
+          <div class="ring-highlight"></div>
+        </div>
+        <div class="core-center"></div>
+      </div>
+
+      <div class="meta">
+        <span id="currentTime">00:00</span>
+        <span id="duration">00:00</span>
+      </div>
+      <input id="progress" class="range" type="range" min="0" max="100" value="0" step="0.1" aria-label="재생 위치" />
+
+      <div class="transport" aria-label="재생 제어">
+        <button id="prevBtn" type="button" aria-label="이전 곡">⏮</button>
+        <button id="playBtn" class="play" type="button" aria-label="재생">▶</button>
+        <button id="nextBtn" type="button" aria-label="다음 곡">⏭</button>
+      </div>
+
+      <div class="time-row" style="margin: 16px 0 18px;">
+        <div style="display:flex; gap:10px;">
+          <button id="shuffleBtn" class="mode-btn" type="button" title="셔플">🔀</button>
+          <button id="repeatBtn" class="mode-btn" type="button" title="한 곡 반복">🔁</button>
+        </div>
+        <button id="refreshBtn" class="ghost-btn" type="button">캐시 새로고침</button>
+      </div>
+
+      <div class="volume-row">
+        <span>🔈</span>
+        <input id="volume" class="range" type="range" min="0" max="1" step="0.01" value="0.65" aria-label="볼륨" />
+        <span>🔊</span>
+      </div>
+
+      <section class="lyrics" aria-label="가사">
+        <div id="lyricsInner" class="lyrics-inner">
+          <div class="lyric-line">가사를 불러오는 중…</div>
+        </div>
+      </section>
+
+     <!-- <div class="hint">
+        브라우저에서 바로 재생되고, 설치 가능한 PWA 형태로 사용할 수 있습니다.
+      </div> -->
+    </section>
+
+    <section class="panel playlist-panel" aria-label="플레이리스트">
+      <div class="playlist-header">
+        <div>
+          <div class="eyebrow">Playlist</div>
+          <h2 style="margin:0; font-size:1.25rem;">장평 뮤직앨범 트랙</h2>
+        </div>
+        <div class="status"><span class="status-dot"></span><span id="swStatus">웹 사용 가능</span></div>
+      </div>
+
+      <div id="playlist" class="playlist"></div>
+      <p class="empty-msg" id="playlistEmpty" hidden>플레이리스트가 없습니다.</p>
+
+      <section class="links-section" aria-label="곡별 링크">
+        <div class="eyebrow">Track Links</div>
+        <h3 style="margin:0; font-size:1.05rem;">MP3 다운로드 / YouTube 링크</h3>
+        <div id="trackLinks" class="links-list"></div>
+      </section>
+
+      <section class="links-section" aria-label="정보 링크">
+      <div class="eyebrow">Club Info</div>
+               
+    </section>
+      
+  <section class="seo-intro">
+  <h2 style="margin:0; font-size:1.25rem;">동대문구 장평 배드민턴클럽 소개</h2>
+    <a href="./club-intro.html" color:#7db5ff; text-decoration:none;>장평 배드민턴클럽 소개</a>
+  <p>
+    장평 배드민턴클럽은 서울 동대문구에서 활동하는 배드민턴동호회입니다.
+    장평클럽의 소개, 활동 사진, 음악앨범, 유튜브 영상, 음원 다운로드를 이 페이지에서 확인할 수 있습니다.
+  </p>
+  <p>
+    동대문구 배드민턴, 서울시 배드민턴, 배드민턴클럽, 배드민턴동호회 정보를 찾는 분들을 위한 공식 안내 페이지입니다.
+  </p>
+</section>
+      
+      
+      <br>
+
+    
+  </main>
+
+  <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+
+  <script>
+    const songs = [
+  {
+    "title": "We Play As One",
+    "artist": "Tony.Park",
+    "cover": "./sound/We Play As One.png",
+    "url": "./sound/We Play As One.mp3",
+    "lrc": "./sound/We Play As One.lrc",
+    "youtube": "https://youtu.be/EltOpNVTuR0?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS"
+  },
+  {
+    "title": "같은 코트, 같은 마음(EDM)",
+    "artist": "Tony.Park",
+    "cover": "./sound/같은 코트, 같은 마음(EDM).png",
+    "url": "./sound/같은 코트, 같은 마음(EDM).mp3",
+    "lrc": "./sound/같은 코트, 같은 마음(EDM).lrc",
+    "youtube": "https://youtu.be/K9yy9eBCtFI?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS"
+  },
+  {
+    "title": "우리의 기억",
+    "artist": "Tony.Park",
+    "cover": "./sound/우리의 기억.png",
+    "url": "./sound/우리의 기억.mp3",
+    "lrc": "./sound/우리의 기억.lrc",
+    "youtube": "https://youtu.be/5D16i1p67Us?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS"
+  },
+  {
+    "title": "그날의 코트",
+    "artist": "Tony.Park",
+    "cover": "./sound/그날의 코트.png",
+    "url": "./sound/그날의 코트.mp3",
+    "lrc": "./sound/그날의 코트.lrc",
+    "youtube": "https://youtu.be/8u35JNcAMIQ?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS"
+  },
+  {
+    "title": "오늘도, 장평에서",
+    "artist": "Tony.Park",
+    "cover": "./sound/오늘도, 장평에서.png",
+    "url": "./sound/오늘도, 장평에서.mp3",
+    "lrc": "./sound/오늘도, 장평에서.lrc",
+    "youtube": "https://youtu.be/wGgvb5_fJNI?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS"
+  }
+];
+
+    const state = {
+      currentIndex: 0,
+      lyrics: [],
+      shuffle: false,
+      repeat: false,
+      deferredPrompt: null
+    };
+
+    const audio = document.getElementById('audio');
+    const titleEl = document.getElementById('title');
+    const artistEl = document.getElementById('artist');
+    const coverEl = document.getElementById('cover');
+    const diskEl = document.getElementById('disk');
+    const progressEl = document.getElementById('progress');
+    const playBtn = document.getElementById('playBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const repeatBtn = document.getElementById('repeatBtn');
+    const volumeEl = document.getElementById('volume');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const playlistEl = document.getElementById('playlist');
+    const trackLinksEl = document.getElementById('trackLinks');
+    const lyricsInner = document.getElementById('lyricsInner');
+    const installBtn = document.getElementById('installBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const swStatus = document.getElementById('swStatus');
+
+    function fmtTime(sec) {
+      if (!Number.isFinite(sec)) return '00:00';
+      const min = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${String(min).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function setDiskPlaying(isPlaying) {
+      diskEl.classList.add('rotating');
+      diskEl.classList.toggle('paused', !isPlaying);
+    }
+
+
+    function renderTrackLinks() {
+      trackLinksEl.innerHTML = '';
+
+      songs.forEach((song, index) => {
+        const item = document.createElement('div');
+        item.className = 'link-card';
+
+        const youtubeLink = song.youtube && song.youtube.trim()
+          ? `<a class="track-link" href="${song.youtube}" target="_blank" rel="noopener noreferrer"><img src='./icons/youtube_small.png' width=20 > 보기</a>`
+          : `<span class="track-link muted">YouTube 링크 미입력</span>`;
+
+        item.innerHTML = `
+          <div class="link-card-title">${String(index + 1).padStart(2, '0')}. ${escapeHtml(song.title)}</div>
+          <div class="link-row">
+            <a class="track-link" href="${song.url}" download><img src='./icons/mp3_down.png' width=25> 다운</a>
+            <a class="track-link" href="${song.lrc}" download> 가사 다운</a>
+            ${youtubeLink}
+          </div>
+        `;
+
+        trackLinksEl.appendChild(item);
+      });
+     
+    }
+
+    function renderPlaylist() {
+      playlistEl.innerHTML = '';
+      songs.forEach((song, index) => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'track';
+        item.dataset.index = index;
+        item.innerHTML = `
+          <div class="track-num">${String(index + 1).padStart(2, '0')}</div>
+          <div>
+            <div class="track-title">${song.title}</div>
+            <div class="track-artist">${song.artist}</div>
+          </div>
+          <div class="track-state">${state.currentIndex === index && !audio.paused ? '재생중' : ''}</div>
+        `;
+        if (index === state.currentIndex) item.classList.add('active');
+        item.addEventListener('click', () => loadTrack(index, true));
+        playlistEl.appendChild(item);
+      });
+    }
+
+    async function fetchTextWithEncoding(url) {
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${url}`);
+      }
+
+      const buffer = await response.arrayBuffer();
+
+      try {
+        return new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+      } catch (e) {
+        try {
+          return new TextDecoder('euc-kr').decode(buffer);
+        } catch (e2) {
+          return new TextDecoder('utf-8').decode(buffer);
+        }
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    async function parseLRC(lrcPath) {
+      lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중…</div>';
+      lyricsInner.style.top = '0px';
+      state.lyrics = [];
+
+      try {
+        const text = await fetchTextWithEncoding(lrcPath);
+        const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n');
+        const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          if (!line) continue;
+
+          const matches = [...line.matchAll(timeReg)];
+          if (!matches.length) continue;
+
+          const content = line.replace(timeReg, '').trim();
+          if (!content) continue;
+
+          for (const match of matches) {
+            const min = parseInt(match[1], 10);
+            const sec = parseInt(match[2], 10);
+            const fracRaw = match[3];
+            const frac = fracRaw.length === 2 ? parseInt(fracRaw, 10) / 100 : parseInt(fracRaw, 10) / 1000;
+            state.lyrics.push({
+              time: min * 60 + sec + frac,
+              content
+            });
+          }
+        }
+
+        state.lyrics.sort((a, b) => a.time - b.time);
+
+        if (state.lyrics.length) {
+          lyricsInner.innerHTML = state.lyrics
+            .map((l, i) => `<div class="lyric-line" id="line-${i}">${escapeHtml(l.content)}</div>`)
+            .join('');
+        } else {
+          lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+        }
+      } catch (e) {
+        console.error('LRC load error:', e);
+        lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러올 수 없습니다</div>';
+      }
+    }
+
+    async function loadTrack(index, autoplay = false) {
+      state.currentIndex = index;
+      const song = songs[index];
+      titleEl.textContent = song.title;
+      artistEl.textContent = song.artist;
+      coverEl.src = song.cover;
+      coverEl.alt = `${song.title} 앨범 아트`;
+      audio.src = song.url;
+      progressEl.value = 0;
+      currentTimeEl.textContent = '00:00';
+      durationEl.textContent = '00:00';
+      renderPlaylist();
+      await parseLRC(song.lrc);
+      setDiskPlaying(false);
+      if (autoplay) {
+        playCurrent();
+      }
+    }
+
+    async function playCurrent() {
+      try {
+        await audio.play();
+        playBtn.textContent = '⏸';
+        playBtn.setAttribute('aria-label', '일시정지');
+        setDiskPlaying(true);
+        renderPlaylist();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function pauseCurrent() {
+      audio.pause();
+      playBtn.textContent = '▶';
+      playBtn.setAttribute('aria-label', '재생');
+      setDiskPlaying(false);
+      renderPlaylist();
+    }
+
+    function togglePlay() {
+      if (audio.paused) playCurrent();
+      else pauseCurrent();
+    }
+
+    function nextTrack() {
+      const nextIndex = state.shuffle
+        ? Math.floor(Math.random() * songs.length)
+        : (state.currentIndex + 1) % songs.length;
+      loadTrack(nextIndex, true);
+    }
+
+    function prevTrack() {
+      const prevIndex = (state.currentIndex - 1 + songs.length) % songs.length;
+      loadTrack(prevIndex, true);
+    }
+
+    function updateLyrics(currentTime) {
+      if (!state.lyrics.length) return;
+      let activeIndex = -1;
+
+      for (let i = 0; i < state.lyrics.length; i++) {
+        const current = state.lyrics[i];
+        const next = state.lyrics[i + 1];
+        if (currentTime >= current.time && (!next || currentTime < next.time)) {
+          activeIndex = i;
+          break;
+        }
+      }
+
+      document.querySelectorAll('.lyric-line').forEach((line, i) => {
+        line.classList.toggle('active', i === activeIndex);
+      });
+
+      if (activeIndex >= 0) {
+        lyricsInner.style.top = `${Math.max(0, activeIndex - 1) * -36}px`;
+      }
+    }
+
+    function bindEvents() {
+      playBtn.addEventListener('click', togglePlay);
+      prevBtn.addEventListener('click', prevTrack);
+      nextBtn.addEventListener('click', nextTrack);
+
+      shuffleBtn.addEventListener('click', () => {
+        state.shuffle = !state.shuffle;
+        shuffleBtn.classList.toggle('active', state.shuffle);
+      });
+
+      repeatBtn.addEventListener('click', () => {
+        state.repeat = !state.repeat;
+        repeatBtn.classList.toggle('active', state.repeat);
+      });
+
+      progressEl.addEventListener('input', () => {
+        if (!audio.duration) return;
+        audio.currentTime = (Number(progressEl.value) / 100) * audio.duration;
+      });
+
+      volumeEl.addEventListener('input', () => {
+        audio.volume = Number(volumeEl.value);
+      });
+
+      refreshBtn.addEventListener('click', async () => {
+        if (!('serviceWorker' in navigator)) {
+          location.reload();
+          return;
+        }
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const reg of regs) {
+          reg.update();
+        }
+        location.reload();
+      });
+
+      audio.addEventListener('loadedmetadata', () => {
+        durationEl.textContent = fmtTime(audio.duration);
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        if (audio.duration) {
+          progressEl.value = ((audio.currentTime / audio.duration) * 100).toFixed(2);
+        }
+        currentTimeEl.textContent = fmtTime(audio.currentTime);
+        updateLyrics(audio.currentTime);
+      });
+
+      audio.addEventListener('ended', () => {
+        if (state.repeat) {
+          audio.currentTime = 0;
+          playCurrent();
+        } else {
+          nextTrack();
+        }
+      });
+
+      audio.addEventListener('pause', () => {
+        playBtn.textContent = '▶';
+        playBtn.setAttribute('aria-label', '재생');
+        setDiskPlaying(false);
+        renderPlaylist();
+      });
+
+      audio.addEventListener('play', () => {
+        playBtn.textContent = '⏸';
+        playBtn.setAttribute('aria-label', '일시정지');
+        setDiskPlaying(true);
+        renderPlaylist();
+      });
+    }
+
+    function initInstallPrompt() {
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        state.deferredPrompt = event;
+        installBtn.hidden = false;
+      });
+
+      installBtn.addEventListener('click', async () => {
+        if (!state.deferredPrompt) return;
+        state.deferredPrompt.prompt();
+        await state.deferredPrompt.userChoice;
+        state.deferredPrompt = null;
+        installBtn.hidden = true;
+      });
+
+      window.addEventListener('appinstalled', () => {
+        installBtn.hidden = true;
+      });
+    }
+
+    async function registerSW() {
+      if (!('serviceWorker' in navigator)) return;
+      try {
+        const reg = await navigator.serviceWorker.register('./sw.js');
+        swStatus.textContent = 'PWA 준비됨';
+        if (reg.waiting) swStatus.textContent = '업데이트 대기 중';
+      } catch (err) {
+        console.error(err);
+        swStatus.textContent = '서비스워커 등록 실패';
+      }
+    }
+
+    bindEvents();
+    initInstallPrompt();
+    renderPlaylist();
+    renderTrackLinks();
+    loadTrack(0, false);
+    audio.volume = Number(volumeEl.value);
+    registerSW();
+  </script>
+
+</body>
+</html>
